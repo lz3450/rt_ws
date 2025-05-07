@@ -7,7 +7,7 @@ elif [ -n "$ZSH_VERSION" ]; then
 else
   echo "Unsupported shell"
 fi
-echo "RT_WS: $RT_WS"
+echo "RT_WS=$RT_WS"
 
 echo "shell: $SHELL"
 ROS2_WS="$RT_WS/../../ros2_ws"
