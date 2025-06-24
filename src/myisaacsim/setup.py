@@ -13,13 +13,11 @@ setup(
             "share/" + package_name + "/launch",
             [
                 "launch/task0.launch.py",
-                "launch/task1.launch.py",
             ],
         ),
         (
             "share/" + package_name + "/config",
             [
-                "config/panda_moveit_config.rviz",
             ],
         ),
     ],
