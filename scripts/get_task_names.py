@@ -1,10 +1,10 @@
-PLATFORMS=["sim", "phy"]
-ROBOT_TYPES=["wheeled", "arm"]
-ROBOT_TASKS={
+PLATFORMS = ["sim", "phy"]
+ROBOT_TYPES = ["wheeled", "arm"]
+ROBOT_TASKS = {
     "wheeled": ["navigating", "docking", "following"],
-    "arm": ["picking", "placing", "drawing"]
+    "arm": ["picking", "placing", "drawing"],
 }
-ATTACK_VECTORS=["config", "rogue_node", "algorithm", "actuator"]
+ATTACK_VECTORS = ["config", "rogue_node", "algorithm", "actuator"]
 
 for platform in PLATFORMS:
     for robot_type in ROBOT_TYPES:
