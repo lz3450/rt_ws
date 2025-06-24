@@ -10,13 +10,20 @@ fi
 echo "RT_WS=$RT_WS"
 
 echo "shell: $SHELL"
-ROS2_WS="$RT_WS/../../ros2_ws"
+if [[ -d "$RT_WS/../ros2_ws" ]]; then
+    ROS2_WS="$RT_WS/../ros2_ws"
+elif [[ -d "$RT_WS/../../ros2_ws" ]]; then
+    ROS2_WS="$RT_WS/../../ros2_ws"
+else
+    echo "ros2_ws not found"
+    exit 1
+fi
 
 MOVEIT2_SETUP="$ROS2_WS/moveit2_setup.sh"
 if [[ -f "$MOVEIT2_SETUP" ]]; then
     . "$MOVEIT2_SETUP"
 else
-    echo "moveit2 set up failed"
+    echo "moveit2 setup script not found"
     exit 1
 fi
 
