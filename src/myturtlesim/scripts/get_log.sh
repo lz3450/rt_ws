@@ -3,6 +3,7 @@
 set -e
 
 export MYTURTLESIM_TF2_DIR="$(cd -- "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1; pwd -P)/.."
+myturtlesim_tf2_launch_log_dir="$MYTURTLESIM_TF2_DIR/log"
 
 
 declare -i pid
@@ -36,7 +37,7 @@ trap clean EXIT
 function launch {
     local _scale_forward="$1"
     local _scale_rotation="$2"
-    local _screenshot_file="$MYTURTLESIM_TF2_DIR/log/myturtlesim_tf2_launch_${_scale_forward/./}_${_scale_rotation/./}.png"
+    local _screenshot_file="$myturtlesim_tf2_launch_log_dir/${_scale_forward/./}_${_scale_rotation/./}/launch.png"
 
     echo "$_scale_forward $_scale_rotation"
     setsid ./launch_myturtle_tf2.sh "$_scale_forward" "$_scale_rotation" > /dev/null &
@@ -52,10 +53,6 @@ function launch {
     # Kill the specific process using its PID
     kill -INT -- -$pid
 }
-
-if [ ! -d "$MYTURTLESIM_TF2_DIR/log" ]; then
-    mkdir "$MYTURTLESIM_TF2_DIR/log"
-fi
 
 if [ "$#" -eq 0 ]; then
     declare -a scales
