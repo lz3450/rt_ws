@@ -1,0 +1,24 @@
+digraph G {
+    "sys.stdin.read(1)" -> "key";
+    "key" -> "MOVE_BINDINGS[key]";
+    "key" -> "SPEED_BINDINGS[key]";
+    "MOVE_BINDINGS[key]" -> "x";
+    "MOVE_BINDINGS[key]" -> "y";
+    "MOVE_BINDINGS[key]" -> "z";
+    "MOVE_BINDINGS[key]" -> "th";
+    "SPEED_BINDINGS[key]" -> "linear";
+    "SPEED_BINDINGS[key]" -> "angular";
+    "x" -> "twist_msg.linear.x";
+    "y" -> "twist_msg.linear.y";
+    "z" -> "twist_msg.linear.z";
+    "th" -> "twist_msg.angular.z";
+    "linear" -> "twist_msg.linear.x";
+    "linear" -> "twist_msg.linear.y";
+    "linear" -> "twist_msg.linear.z";
+    "angular" -> "twist_msg.angular.z";
+    "twist_msg.linear.x" -> "twist_msg";
+    "twist_msg.linear.y" -> "twist_msg";
+    "twist_msg.linear.z" -> "twist_msg";
+    "twist_msg.angular.z" -> "twist_msg";
+    "twist_msg" -> "pub.publish(twist_msg)";
+}
