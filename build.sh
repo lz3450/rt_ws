@@ -3,7 +3,7 @@
 set -e
 
 if [[ -z $ROS_DISTRO ]]; then
-    . ./rt_moveit2_setup.sh
+    . ./rt_setup.sh
 fi
 
 export MAKEFLAGS="-j $(nproc)"
