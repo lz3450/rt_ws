@@ -13,6 +13,7 @@
         "isaacsim",
         "moveit",
         "myisaacsim",
+        "myteleop",
         "myturtlesim",
         "nanosec",
         "ompl",
@@ -27,6 +28,7 @@
         "rviz",
         "schematypens",
         "srdf",
+        "teleoperation",
         "urdf",
         "xacro"
     ],
