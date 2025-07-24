@@ -1,0 +1,72 @@
+#!/usr/bin/env python3
+
+import os
+import json
+import subprocess
+import argparse
+from typing import List, Dict
+
+
+def parse_arguments() -> argparse.Namespace:
+    """Parse command line arguments."""
+    parser = argparse.ArgumentParser(description="Process compile_commands.json to generate LLVM IR or AST.")
+    parser.add_argument("--ir", action="store_true", help="Generate LLVM IR")
+    parser.add_argument("--ast", action="store_true", help="Generate AST")
+    parser.add_argument("--dry-run", action="store_true", help="Perform a dry run without executing commands")
+    parser.add_argument("compile_commands_path", type=str, help="Path to compile_commands.json")
+    return parser.parse_args()
+
+
+def create_output_directory(compile_commands_dir: str, dir_name: str) -> str:
+    """Create the specified directory in the compile commands directory."""
+    output_dir = os.path.join(compile_commands_dir, dir_name)
+    os.makedirs(output_dir, exist_ok=True)
+    return output_dir
+
+
+def process_compile_commands(compile_commands_path: str, output_dir: str, dry_run: bool, mode: str) -> None:
+    """Load and process each compile command to generate LLVM IR or AST."""
+    with open(file=compile_commands_path, mode="r", encoding="utf-8") as f:
+        compile_cmds: List[Dict[str, str]] = json.load(f)
+        for cmd in compile_cmds:
+            params = cmd["command"].split()
+            params[0] = "clang++"
+            o_index = params.index("-o")
+            del params[o_index:]
+
+            # Remove optimization flags such as -O1, -O2, -O3, etc.
+            params = [param for param in params if not param.startswith("-O")]
+            params.append("-std=c++17")
+            params.append("-O0")
+
+            if mode == "ir":
+                params.extend(["-S", "-emit-llvm", "-fno-discard-value-names", "-Xclang", "-disable-O0-optnone"])
+                params.extend(
+                    ["-o", os.path.join(output_dir, f'{os.path.basename(cmd["file"])}.ll'), "-c", cmd["file"]]
+                )
+            elif mode == "ast":
+                params.extend(["-Xclang", "-ast-dump", "-fsyntax-only", cmd["file"]])
+
+            if dry_run:
+                print(f"Dry run: {' '.join(params)}")
+            else:
+                subprocess.run(params, stdout=subprocess.PIPE, check=True)
+
+
+def main() -> None:
+    args = parse_arguments()
+    compile_commands_path = args.compile_commands_path
+    compile_commands_dir = os.path.abspath(os.path.dirname(compile_commands_path))
+
+    if args.ir:
+        output_dir = create_output_directory(compile_commands_dir, ".ir")
+        process_compile_commands(compile_commands_path, output_dir, args.dry_run, mode="ir")
+    elif args.ast:
+        output_dir = create_output_directory(compile_commands_dir, ".ast")
+        process_compile_commands(compile_commands_path, output_dir, args.dry_run, mode="ast")
+    else:
+        print("Error: You must specify either --ir or --ast.")
+
+
+if __name__ == "__main__":
+    main()
