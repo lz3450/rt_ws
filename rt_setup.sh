@@ -12,11 +12,30 @@ echo "RT_WS=$RT_WS"
 echo "shell: $shell"
 ROS2_WS="$RT_WS/../../ros2_ws"
 
-MOVEIT2_SETUP="$ROS2_WS/moveit2_setup.sh"
+ROS2_SETUP="$ROS2_WS/ros2_humble/install/local_setup.$shell"
+if [[ -f "$ROS2_SETUP" ]]; then
+    echo "ros2 humble ($shell)"
+    . "$ROS2_SETUP"
+else
+    echo "failed to set up ros2 humble"
+    exit 1
+fi
+
+MOVEIT2_SETUP="$ROS2_WS/moveit2_humble/install/local_setup.$shell"
 if [[ -f "$MOVEIT2_SETUP" ]]; then
+    echo "moveit2 ($shell)"
     . "$MOVEIT2_SETUP"
 else
-    echo "moveit2 set up failed"
+    echo "failed to set up moveit2"
+    exit 1
+fi
+
+NAV2_SETUP="$ROS2_WS/nav2_humble/install/local_setup.$shell"
+if [[ -f "$NAV2_SETUP" ]]; then
+    echo "nav2 ($shell)"
+    . "$NAV2_SETUP"
+else
+    echo "failed to set up nav2"
     exit 1
 fi
 
