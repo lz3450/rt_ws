@@ -10,6 +10,7 @@
         "fastdds",
         "FASTRTPS",
         "Franka",
+        "gpytorch",
         "isaacsim",
         "moveit",
         "myisaacsim",
