@@ -34,6 +34,7 @@ setup(
     entry_points={
         "console_scripts": [
             "simple_joint_command_publisher = myisaacsim.simple_joint_command_publisher:main",
+            "simple_joint_state_logger = myisaacsim.simple_joint_state_logger:main",
         ],
     },
 )

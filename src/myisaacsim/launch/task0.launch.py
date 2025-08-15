@@ -5,9 +5,9 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     csv_logger = Node(
-        package="utils",
-        executable="csv_logger",
-        name="CSVLoggerNode",
+        package="myisaacsim",
+        executable="simple_joint_state_logger",
+        name="SimpleJointStateLogger",
     )
 
     simple_joint_command_publisher = Node(
@@ -22,7 +22,7 @@ def generate_launch_description():
     )
 
     shutdown = TimerAction(
-        period=15.0,
+        period=30.0,
         actions=[Shutdown()],
     )
 

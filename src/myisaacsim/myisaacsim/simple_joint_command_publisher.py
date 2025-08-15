@@ -61,22 +61,10 @@ class SimpleJointCommandPublisher(Node):
         time_elapsed = self.ts_sec - self.ts_start_sec
         self.joint_state.header.stamp = Time(sec=self.ts_sec, nanosec=self.ts_nanosec)
 
-        # if (time_elapsed) % 2 == 0:
-        #     joint_position = np.array(self.default_joints) + 0.25
-        # else:
-        #     joint_position = np.array(self.default_joints) - 0.25
-
-        # if time_elapsed <= 5:
-        #     joint_position = np.array(self.default_joints) - 0.25
-        # elif 5 < time_elapsed <= 15:
-        #     joint_position = np.array(self.joint_state.position) + time_elapsed * 0.01
-        # else:
-        #     return
-
-        if time_elapsed <= 3:
-            joint_position = np.array(self.default_joints) - 0.25
-        else:
+        if (time_elapsed) % 2 == 0:
             joint_position = np.array(self.default_joints) + 0.25
+        else:
+            joint_position = np.array(self.default_joints) - 0.25
 
         self.joint_state.position = joint_position.tolist()
 
