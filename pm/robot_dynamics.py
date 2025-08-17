@@ -72,7 +72,10 @@ class RobotDynamics:
         """Convert tensor back to numpy array"""
         if self.use_pytorch and isinstance(tensor, torch.Tensor):
             return tensor.detach().cpu().numpy()
-        return tensor
+        elif isinstance(tensor, np.ndarray):
+            return tensor
+        else:
+            raise TypeError("Unsupported tensor type")
 
     def forward_kinematics(self, q: Union[np.ndarray, torch.Tensor]) -> List[np.ndarray]:
         """
