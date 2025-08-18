@@ -1,6 +1,9 @@
-.cache
-__pycache__
+.cache/
+__pycache__/
 
-/build
-/install
-/log
+/build/
+/install/
+/log/
+
+/data/*
+!/data/rm_traj.py
