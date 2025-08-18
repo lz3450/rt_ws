@@ -11,8 +11,8 @@ The implementation uses the parsed URDF data and computes:
 - Gravitational forces
 - Forward and inverse dynamics
 
-Author: Assistant
-Date: August 16, 2025
+
+
 """
 
 import numpy as np

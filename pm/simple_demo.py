@@ -6,8 +6,8 @@ Simplified Robot Dynamics Demo
 This script demonstrates the key concepts of robot dynamics modeling
 without the computationally expensive Coriolis matrix calculation.
 
-Author: Assistant
-Date: August 16, 2025
+
+
 """
 
 import numpy as np

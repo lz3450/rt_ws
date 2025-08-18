@@ -14,8 +14,8 @@ Step-by-step explanation:
 5. Perform forward and inverse dynamics
 6. Simulate robot motion
 
-Author: Assistant
-Date: August 16, 2025
+
+
 """
 
 import numpy as np

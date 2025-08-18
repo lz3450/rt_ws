@@ -9,8 +9,8 @@ URDF Parser for Robotic Arm Dynamics Modeling
 This module provides a class to parse URDF files and extract the necessary
 parameters for implementing Newton-Euler/Lagrange equations for robotic arm dynamics.
 
-Author: Assistant
-Date: August 16, 2025
+
+
 """
 
 from typing import Dict, List, Optional
