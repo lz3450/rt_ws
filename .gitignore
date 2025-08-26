@@ -5,6 +5,8 @@ __pycache__/
 /install/
 /log/
 
+*.dot
+
 /data/*
 !/data/rm_traj.py
 !/data/dwr_traj.py

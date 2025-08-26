@@ -1,7 +1,8 @@
 {
     "version": "0.2",
     "ignorePaths": [
-        "pyrightconfig.json"
+        "*.dot",
+        "pyrightconfig.json",
     ],
     "dictionaryDefinitions": [],
     "dictionaries": [],
@@ -29,14 +30,17 @@
         "myturtlesim",
         "nanosec",
         "ompl",
+        "penwidth",
         "pilz",
         "pybullet",
         "pytest",
+        "rankdir",
         "rclcpp",
         "rclpy",
         "remappings",
         "Robo",
         "rosgraph",
+        "rosout",
         "rviz",
         "schematypens",
         "srdf",
