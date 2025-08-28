@@ -184,6 +184,12 @@ def generate_launch_description():
         arguments=["panda_hand_controller", "-c", "/controller_manager"],
     )
 
+    task0_logger = Node(
+        package="task0",
+        executable="task0_logger",
+        output="screen",
+    )
+
     return LaunchDescription(
         [
             ros2_control_hardware_type,
@@ -197,5 +203,6 @@ def generate_launch_description():
             joint_state_broadcaster_spawner,
             panda_arm_controller_spawner,
             panda_hand_controller_spawner,
+            task0_logger,
         ]
     )

@@ -1,62 +1,94 @@
+#
+# logger.py
+#
+# Logger for RoboGuard task0
+#
+
+import os
+from datetime import datetime
+import csv
+
+###
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import JointState
-import csv
+from moveit_msgs.msg import MotionPlanRequest
 
-CSV_FILE_NAME = "task0_log.csv"
+HOME_DIR = os.path.expanduser("~")
+TIMESTAMP = datetime.now().strftime("%Y%m%d_%H%M%S")
+JOINT_STATE_CSV_PATH = f"{HOME_DIR}/Projects/RoboGuard/rg_ws/data/task0-{TIMESTAMP}.csv"
+MOTION_PLAN_LOG_PATH = f"{HOME_DIR}/Projects/RoboGuard/rg_ws/data/task0_motion_plan-{TIMESTAMP}.txt"
+
 
 class Task0LoggerNode(Node):
     def __init__(self):
         super().__init__("task0_logger_node")
-
-        self.joint_names_seen = set()
-        self.joint_columns_written = False
+        self.joint_header_ready = False
         self.starting_time_sec = 0
-        self.file = open(CSV_FILE_NAME, "w", newline="")
-        self.writer = csv.writer(self.file)
+        self.joint_state_csv = open(JOINT_STATE_CSV_PATH, "w", newline="")
+        self.motion_plan_log = open(MOTION_PLAN_LOG_PATH, "w", newline="")
+        self.writer = csv.writer(self.joint_state_csv)
 
-        self.subscription = self.create_subscription(
-            JointState,  # Change to your topic's message type
-            "/isaac_joint_commands",
-            self.command_listener_callback,
-            10,
-        )
-        self.subscription = self.create_subscription(
-            JointState,  # Change to your topic's message type
+        self.states_subscription = self.create_subscription(
+            JointState,
             "/isaac_joint_states",
             self.states_listener_callback,
             10,
         )
 
+        self.commands_subscription = self.create_subscription(
+            JointState,
+            "/isaac_joint_commands",
+            self.command_listener_callback,
+            10,
+        )
+
+        self.motion_plan_subscription = self.create_subscription(
+            MotionPlanRequest,
+            "/motion_plan_request",
+            self.motion_plan_listener_callback,
+            10,
+        )
+
     def log_joint_state(self, msg: JointState, topic: str):
-        # On first message, define the header dynamically
-        if not self.joint_columns_written:
-            self.starting_time_sec = msg.header.stamp.sec
-            self.joint_names_seen = msg.name
-            headers = ["topic", "timestamp", "timestamp_ns"]
-            for joint in msg.name:
-                headers += [f"{joint}_position", f"{joint}_velocity", f"{joint}_effort"]
-
-            self.writer.writerow(headers)
-            self.joint_columns_written = True
-
         row = [topic, msg.header.stamp.sec, msg.header.stamp.nanosec]
-        for i, joint in enumerate(self.joint_names_seen):
+        row_pos = []
+        row_vel = []
+        row_eff = []
+        for i in range(len(self.joint_names_seen)):
             pos = msg.position[i] if i < len(msg.position) else ""
             vel = msg.velocity[i] if i < len(msg.velocity) else ""
             eff = msg.effort[i] if i < len(msg.effort) else ""
-            row.extend([pos, vel, eff])
+            row_pos.append(pos)
+            row_vel.append(vel)
+            row_eff.append(eff)
 
-        self.writer.writerow(row)
+        self.writer.writerow(row + row_pos + row_vel + row_eff)
 
-    def command_listener_callback(self, msg):
-        self.log_joint_state(msg, "command")
+    def command_listener_callback(self, msg: JointState):
+        if self.joint_header_ready:
+            self.log_joint_state(msg, "c")
 
-    def states_listener_callback(self, msg):
-        self.log_joint_state(msg, "states")
+    def states_listener_callback(self, msg: JointState):
+        # On first message, define the header dynamically
+        if not self.joint_header_ready:
+            self.starting_time_sec = msg.header.stamp.sec
+            self.joint_names_seen = tuple(msg.name)
+            header = ["t", "sec", "nanosec"]
+            for t in ("pos", "vel", "eff"):
+                header.extend([f"{joint.replace('panda_', '')}_{t}" for joint in self.joint_names_seen])
+
+            self.writer.writerow(header)
+            self.joint_header_ready = True
+
+        self.log_joint_state(msg, "s")
+
+    def motion_plan_listener_callback(self, msg: MotionPlanRequest):
+        print(msg, file=self.motion_plan_log)
 
     def destroy_node(self):
-        self.file.close()
+        self.joint_state_csv.close()
+        self.motion_plan_log.close()
         super().destroy_node()
 
 
