@@ -2,7 +2,7 @@
     "version": "0.2",
     "ignorePaths": [
         "*.dot",
-        "pyrightconfig.json",
+        "pyrightconfig.json"
     ],
     "dictionaryDefinitions": [],
     "dictionaries": [],
@@ -10,6 +10,7 @@
         "allclose",
         "buildtool",
         "carb",
+        "cpplint",
         "cyclonedds",
         "DCMAKE",
         "ddot",
