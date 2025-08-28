@@ -1,17 +1,5 @@
 {
     "extraPaths": [
-        "build/myisaacsim",
-        "install/myisaacsim/lib/python3.10/site-packages",
-        "build/utils",
-        "install/utils/lib/python3.10/site-packages",
-        "install/rt_tb4_navigation/local/lib/python3.10/dist-packages",
-        "install/myturtlesim/local/lib/python3.10/dist-packages",
-        "build/myteleop",
-        "install/myteleop/lib/python3.10/site-packages",
-        "../../IsaacSim-ros_workspaces/humble_ws/build/isaac_ros_navigation_goal",
-        "../../IsaacSim-ros_workspaces/humble_ws/install/isaac_ros_navigation_goal/lib/python3.10/site-packages",
-        "../../IsaacSim-ros_workspaces/humble_ws/install/isaac_ros2_messages/local/lib/python3.10/dist-packages",
-        "../../IsaacSim-ros_workspaces/humble_ws/install/custom_message/local/lib/python3.10/dist-packages",
         "../../ros2_ws/moveit2_humble/build/moveit_configs_utils",
         "../../ros2_ws/moveit2_humble/install/moveit_configs_utils/lib/python3.10/site-packages",
         "../../ros2_ws/moveit2_humble/build/launch_param_builder",
