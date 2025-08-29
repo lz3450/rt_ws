@@ -1,4 +1,5 @@
 {
+    "typeCheckingMode": "standard",
     "extraPaths": [
         "../../ros2_ws/moveit2_humble/build/moveit_configs_utils",
         "../../ros2_ws/moveit2_humble/install/moveit_configs_utils/lib/python3.10/site-packages",
