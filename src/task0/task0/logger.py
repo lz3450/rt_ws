@@ -16,13 +16,15 @@ from moveit_msgs.msg import MotionPlanRequest
 
 HOME_DIR = os.path.expanduser("~")
 TIMESTAMP = datetime.now().strftime("%Y%m%d_%H%M%S")
-JOINT_STATE_CSV_PATH = f"{HOME_DIR}/Projects/RoboGuard/rg_ws/data/task0-{TIMESTAMP}.csv"
-MOTION_PLAN_LOG_PATH = f"{HOME_DIR}/Projects/RoboGuard/rg_ws/data/task0_motion_plan-{TIMESTAMP}.txt"
+DATA_ROOT_DIR = f"{HOME_DIR}/Projects/RoboGuard/rg_ws/data/task0"
+JOINT_STATE_CSV_PATH = f"{DATA_ROOT_DIR}/{TIMESTAMP}.csv"
+MOTION_PLAN_LOG_PATH = f"{DATA_ROOT_DIR}/motion_plan-{TIMESTAMP}.txt"
 
 
 class Task0LoggerNode(Node):
     def __init__(self):
         super().__init__("task0_logger_node")
+
         self.joint_header_ready = False
         self.starting_time_sec = 0
         self.joint_state_csv = open(JOINT_STATE_CSV_PATH, "w", newline="")
@@ -93,6 +95,16 @@ class Task0LoggerNode(Node):
 
 
 def main(args=None):
+    os.makedirs(DATA_ROOT_DIR, exist_ok=True)
+    latest_symlink = f"{DATA_ROOT_DIR}/../task0.csv"
+    if os.path.islink(latest_symlink):
+        os.remove(latest_symlink)
+    os.symlink(
+        os.path.relpath(JOINT_STATE_CSV_PATH, os.path.dirname(latest_symlink)),
+        latest_symlink,
+        target_is_directory=False,
+    )
+
     rclpy.init(args=args)
 
     node = Task0LoggerNode()
