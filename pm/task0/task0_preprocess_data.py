@@ -11,7 +11,7 @@ It performs the following operations:
 5. Cleans and formats the data for machine learning
 
 Usage:
-    python preprocess_task0_data.py <input_csv_path> [output_csv_path]
+    python task0_preprocess_data.py <input_csv_path> [output_csv_path]
 """
 
 import argparse
@@ -140,9 +140,9 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-    python preprocess_robot_data.py data/robot_data.csv
-    python preprocess_robot_data.py data/robot_data.csv --output processed_data.csv
-    python preprocess_robot_data.py data/robot_data.csv -o processed_data.csv --quiet
+    python task0_preprocess_data.py data/robot_data.csv
+    python task0_preprocess_data.py data/robot_data.csv --output processed_data.csv
+    python task0_preprocess_data.py data/robot_data.csv -o processed_data.csv --quiet
         """,
     )
 
