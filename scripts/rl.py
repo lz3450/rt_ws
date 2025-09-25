@@ -9,8 +9,7 @@ EXCLUDE = {
         r"/\S+_private_\S+",
         r"/analyzers",
         r"/launch_ros_\S+",
-        r"/transform_listener_impl_\S+",
-        r"/turtlebot4_diagnostics",
+        # r"/transform_listener_impl_\S+",
     ],
     "topics": [
         r"/bond",
@@ -18,7 +17,7 @@ EXCLUDE = {
         r"/diagnostics.*",
         r"/parameter_events",
         r"/rosout",
-        r"/tf",
+        # r"/tf",
     ],
     "services": [
         r"/\S+/describe_parameters",
@@ -53,9 +52,11 @@ def list_nodes() -> list[str]:
 def get_node_info(node: str) -> str:
     """Run 'ros2 node info <node>' to get detailed info of the node."""
     command = ["ros2", "node", "info", node]
-    output = run_command(command)
-    if not output:
-        raise RuntimeError(f"Error getting info for node: {node}")
+    try:
+        output = run_command(command)
+    except RuntimeError as e:
+        print(f"Warning: {e}")
+        output = ""
     return output
 
 
@@ -71,7 +72,7 @@ def parse_node_info(node_info_output: str) -> dict[str, list]:
 
         if line.endswith(":"):
             current_section = line[:-1]
-            node_info[current_section] = []
+            node_info[line[:-1]] = []
         elif current_section:
             match current_section:
                 case "Subscribers" | "Publishers":
@@ -86,6 +87,7 @@ def parse_node_info(node_info_output: str) -> dict[str, list]:
             if not any(re.fullmatch(pattern, medium) for pattern in patterns):
                 node_info[current_section].append(medium)
         else:
+            # first line is the node name
             print(f"Parsing node '{line}'...")
 
     return node_info
