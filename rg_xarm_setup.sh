@@ -1,9 +1,9 @@
 if [ -n "$BASH_VERSION" ]; then
     export RG_WS="$(cd -- "$(dirname "${BASH_SOURCE[0]}")" > /dev/null 2>&1; pwd -P)"
-    shell="bash"
+        shell="bash"
 elif [ -n "$ZSH_VERSION" ]; then
     export RG_WS="$(cd -- "$(dirname "${(%):-%x}")" > /dev/null 2>&1; pwd -P)"
-    shell="zsh"
+        shell="zsh"
 else
     echo "Unsupported shell"
 fi
@@ -11,11 +11,12 @@ echo "RG_WS=$RG_WS"
 
 ################
 . "$RG_WS/../../ros2_ws/ros2_setup.sh"
-. "$RG_WS/../../ros2_ws/nav2_setup.sh"
 . "$RG_WS/../../ros2_ws/moveit2_setup.sh"
-
-################
-. "$RG_WS/../../IsaacSim-ros_workspaces/setup.sh"
+. "$RG_WS/../../ros2_ws/xarm_setup.sh"
+# ISAACSIM_SETUP="$RG_WS/../../IsaacSim-ros_workspaces/setup.sh"
+# if [[ -f "$ISAACSIM_SETUP" ]]; then
+#     . "$ISAACSIM_SETUP"
+# fi
 
 ################
 RG_SETUP="$RG_WS/install/local_setup.$shell"
