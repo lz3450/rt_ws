@@ -14,7 +14,7 @@ umask 0022
 
 . /opt/ros/humble/setup.bash
 
-SRCDIR="../src/xarm_humble"
+SRCDIR="../../src/xarm_humble"
 DEP_PKGS_FILE="dep-pkgs.txt"
 DEP_PKGS_TO_INSTALL_FILE="dep-pkgs-to-install.txt"
 
