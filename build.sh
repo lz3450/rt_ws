@@ -3,7 +3,7 @@
 set -e
 
 if [[ -z $ROS_DISTRO ]]; then
-    . ./rg_setup.sh
+    . /opt/ros/humble/setup.bash
 fi
 
 export MAKEFLAGS="-j $(nproc)"
