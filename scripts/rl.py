@@ -3,7 +3,7 @@
 import subprocess
 import re
 
-EXCLUDE = {
+EXCLUDE_RE = {
     "nodes": [
         r"/_\S+",
         r"/\S+_private_\S+",
@@ -46,7 +46,7 @@ def list_nodes() -> list[str]:
     if not output:
         raise RuntimeError("No ROS2 nodes found.")
     nodes = output.splitlines()
-    return [node for node in nodes if not any(re.fullmatch(pattern, node) for pattern in EXCLUDE["nodes"])]
+    return [node for node in nodes if not any(re.fullmatch(pattern, node) for pattern in EXCLUDE_RE["nodes"])]
 
 
 def get_node_info(node: str) -> str:
@@ -61,9 +61,15 @@ def get_node_info(node: str) -> str:
 
 
 def parse_node_info(node_info_output: str) -> dict[str, list]:
+    # {role: [medium_name, ...]}
+    # role: Subscribers, Publishers, Service Servers, Service Clients, Action Servers, Action Clients
     node_info: dict[str, list] = {}
 
-    current_section = None
+    role = None
+    patterns: list[re.Pattern] = []
+    topic_exclude_patterns: list[re.Pattern] = [re.compile(pattern) for pattern in EXCLUDE_RE["topics"]]
+    service_exclude_patterns: list[re.Pattern] = [re.compile(pattern) for pattern in EXCLUDE_RE["services"]]
+    action_exclude_patterns: list[re.Pattern] = [re.compile(pattern) for pattern in EXCLUDE_RE["actions"]]
     for line in node_info_output.strip().splitlines():
         line = line.strip()
 
@@ -71,21 +77,21 @@ def parse_node_info(node_info_output: str) -> dict[str, list]:
             continue
 
         if line.endswith(":"):
-            current_section = line[:-1]
-            node_info[line[:-1]] = []
-        elif current_section:
-            match current_section:
+            role = line[:-1]
+            node_info[role] = []
+            match role:
                 case "Subscribers" | "Publishers":
-                    patterns = EXCLUDE["topics"]
+                    patterns = topic_exclude_patterns
                 case "Service Servers" | "Service Clients":
-                    patterns = EXCLUDE["services"]
+                    patterns = service_exclude_patterns
                 case "Action Servers" | "Action Clients":
-                    patterns = EXCLUDE["actions"]
+                    patterns = action_exclude_patterns
                 case _:
-                    raise ValueError(f"Unknown section: {current_section}")
+                    raise ValueError(f"Unknown section: {role}")
+        elif role:
             medium = line.split(": ")[0]
-            if not any(re.fullmatch(pattern, medium) for pattern in patterns):
-                node_info[current_section].append(medium)
+            if not any(pattern.fullmatch(medium) for pattern in patterns):
+                node_info[role].append(medium)
         else:
             # first line is the node name
             print(f"Parsing node '{line}'...")
@@ -93,35 +99,35 @@ def parse_node_info(node_info_output: str) -> dict[str, list]:
     return node_info
 
 
-def generate_dot_file(node_relations: dict[str, dict[str, list]], output_file: str):
+def generate_dot_file(node_roles: dict[str, dict[str, list]], output_file: str):
     """
     Generate a .dot file to visualize node relationships.
     `medium`: topic, service, action
     """
 
-    media_relations: dict[str, dict[str, list]] = {}
+    media_nodes: dict[str, dict[str, list]] = {}
 
-    for node, relations in node_relations.items():
-        for relation, media in relations.items():
+    for node, roles in node_roles.items():
+        for role, media in roles.items():
             for medium in media:
-                if medium not in media_relations:
-                    media_relations[medium] = {}
-                if relation not in media_relations[medium]:
-                    media_relations[medium][relation] = []
-                if node not in media_relations[medium][relation]:
-                    media_relations[medium][relation].append(node)
+                if medium not in media_nodes:
+                    media_nodes[medium] = {}
+                if role not in media_nodes[medium]:
+                    media_nodes[medium][role] = []
+                if node not in media_nodes[medium][role]:
+                    media_nodes[medium][role].append(node)
 
     with open(output_file, "w") as f:
         f.write("digraph {\n")
         f.write("    rankdir = LR;\n")
 
-        for node in node_relations.keys():
+        for node in node_roles.keys():
             f.write(f'    "{node}" [color = black;penwidth = 2;];\n')
 
-        for medium, relations in media_relations.items():
-            for relation, nodes in relations.items():
+        for medium, roles in media_nodes.items():
+            for role, nodes in roles.items():
                 reverse = False
-                match relation:
+                match role:
                     case "Publishers":
                         color = "blue"
                     case "Subscribers":
@@ -138,7 +144,7 @@ def generate_dot_file(node_relations: dict[str, dict[str, list]], output_file: s
                     case "Action Clients":
                         color = "red"
                     case _:
-                        raise ValueError(f"Unknown relation: {relation}")
+                        raise ValueError(f"Unknown relation: {role}")
 
                 f.write(f'    "{medium}" [shape = rectangle;color = {color};];\n')
                 for n in nodes:
@@ -153,15 +159,16 @@ def main():
     nodes = list_nodes()
     print(f"# Nodes: {len(nodes)}")
 
-    node_relations = {}
+    # {node_name: {role: [medium_name, ...], ...}, ...}
+    node_roles = {}
 
     for node in nodes:
         info = get_node_info(node)
         parsed_info = parse_node_info(info)
         if any(parsed_info.values()):
-            node_relations[node] = parsed_info
+            node_roles[node] = parsed_info
 
-    generate_dot_file(node_relations, "ros2_graph.dot")
+    generate_dot_file(node_roles, "ros2_graph.dot")
 
 
 if __name__ == "__main__":
