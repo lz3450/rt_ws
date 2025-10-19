@@ -11,3 +11,5 @@ __pycache__
 /data/*
 !/data/rm_traj.py
 !/data/dwr_traj.py
+
+!/xarm/xarm_moveit.dot
