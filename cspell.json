@@ -88,6 +88,7 @@
         "rclpy",
         "remappings",
         "rg",
+        "rmw",
         "Robo",
         "ros",
         "rosdep",

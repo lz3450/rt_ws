@@ -1,11 +1,12 @@
 .cache
 __pycache__
 
-/build
-/install
-/log
-
 *.dot
+
+/ros2/build
+/ros2/install
+/ros2/log
+
 
 /data/*
 !/data/rm_traj.py
